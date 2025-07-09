@@ -1,0 +1,26 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title">
+            <i class="fas fa-edit"></i> Editar Função
+        </h5>
+        <button type="button" class="close" onclick="closeModal('editFuncaoModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+        <form id="editFuncaoForm" method="POST" action="/funcao/{{ funcao.id }}">
+            {{ form.hidden_tag() }}
+            <input type="hidden" name="_method" value="PUT">
+            
+            <div class="form-group">
+                {{ form.nome.label(class="form-label") }}
+                {{ form.nome(class="form-control", value=funcao.nome, placeholder="Nome da função") }}
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('editFuncaoModal')">Cancelar</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Atualizar Função
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

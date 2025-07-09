@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-tachometer-alt"></i> Dashboard - Sistema de Controle de EPIs</h2>
+            </div>
+            <div class="card-body">
+                <div class="dashboard-grid">
+                    <div class="stats-card">
+                        <div class="stats-number" id="totalFuncionarios">0</div>
+                        <div class="stats-label">Funcionários Ativos</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-number" id="totalEpis">0</div>
+                        <div class="stats-label">EPIs Cadastrados</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-number" id="totalDepartamentos">0</div>
+                        <div class="stats-label">Departamentos</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-number" id="totalFornecedores">0</div>
+                        <div class="stats-label">Fornecedores</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-plus-circle"></i> Cadastros</h5>
+            </div>
+            <div class="card-body">
+                <button class="btn btn-primary" onclick="openModal('departamentoModal')">
+                    <i class="fas fa-building"></i> Novo Departamento
+                </button>
+                <button class="btn btn-primary" onclick="openModal('funcaoModal')">
+                    <i class="fas fa-briefcase"></i> Nova Função
+                </button>
+                <button class="btn btn-primary" onclick="openModal('funcionarioModal')">
+                    <i class="fas fa-user-plus"></i> Novo Funcionário
+                </button>
+                <button class="btn btn-secondary" onclick="openModal('fornecedorModal')">
+                    <i class="fas fa-truck"></i> Novo Fornecedor
+                </button>
+                <button class="btn btn-secondary" onclick="openModal('epiModal')">
+                    <i class="fas fa-hard-hat"></i> Novo EPI
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-cogs"></i> Operações</h5>
+            </div>
+            <div class="card-body">
+                <button class="btn btn-success" onclick="openModal('entradaEpiModal')">
+                    <i class="fas fa-box-open"></i> Entrada de EPIs
+                </button>
+                <button class="btn btn-warning" onclick="openModal('liberacaoEpiModal')">
+                    <i class="fas fa-hand-holding"></i> Liberação de EPIs
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

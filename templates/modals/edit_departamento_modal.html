@@ -1,0 +1,26 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title">
+            <i class="fas fa-edit"></i> Editar Departamento
+        </h5>
+        <button type="button" class="close" onclick="closeModal('editDepartamentoModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+        <form id="editDepartamentoForm" method="POST" action="/departamento/{{ departamento.id }}">
+            {{ form.hidden_tag() }}
+            <input type="hidden" name="_method" value="PUT">
+            
+            <div class="form-group">
+                {{ form.nome.label(class="form-label") }}
+                {{ form.nome(class="form-control", value=departamento.nome) }}
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('editDepartamentoModal')">Cancelar</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Atualizar Departamento
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

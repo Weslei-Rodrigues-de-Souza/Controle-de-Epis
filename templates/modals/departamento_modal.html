@@ -1,0 +1,130 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title">
+            <i class="fas fa-building"></i> Gerenciar Departamentos
+        </h5>
+        <button type="button" class="close" onclick="closeModal('departamentoModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+        <!-- Formulário de Cadastro -->
+        <form id="departamentoForm" method="POST" action="/departamento">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.nome.label(class="form-label") }}
+                {{ form.nome(class="form-control", placeholder="Digite o nome do departamento") }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('departamentoModal')">Cancelar</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Salvar Departamento
+                </button>
+            </div>
+        </form>
+
+        <hr class="my-4">
+
+        <!-- Lista de Departamentos -->
+        <div class="table-responsive">
+            <h6><i class="fas fa-list"></i> Departamentos Cadastrados</h6>
+            <table class="table table-striped" id="departamentosTable">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Data Cadastro</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="departamentosTableBody">
+                    <tr>
+                        <td colspan="3" class="text-center">
+                            <i class="fas fa-spinner fa-spin"></i> Carregando...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+// Definir função globalmente para que possa ser chamada pelo main.js
+window.loadDepartamentos = function() {
+    fetch('/departamentos')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById('departamentosTableBody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">Nenhum departamento cadastrado</td></tr>';
+                return;
+            }
+            
+            data.forEach(dept => {
+                const dataFormatada = dept.created_at ? 
+                    new Date(dept.created_at).toLocaleDateString('pt-BR') : 
+                    'N/A';
+                const row = `
+                    <tr>
+                        <td>${dept.nome}</td>
+                        <td>${dataFormatada}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" onclick="editDepartamento(${dept.id}, '${dept.nome.replace(/'/g, "\\'")}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteDepartamento(${dept.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        })
+        .catch(error => {
+            console.error('Erro ao carregar departamentos:', error);
+            const tbody = document.getElementById('departamentosTableBody');
+            if (tbody) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center text-danger">Erro ao carregar dados</td></tr>';
+            }
+            showAlert('Erro ao carregar lista de departamentos', 'danger');
+        });
+};
+
+window.editDepartamento = function(id, nome) {
+    const novoNome = prompt('Editar nome do departamento:', nome);
+    if (novoNome && novoNome !== nome) {
+        fetch(`/departamento/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({nome: novoNome})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert(data.message, 'success');
+                loadDepartamentos();
+            }
+        });
+    }
+};
+
+window.deleteDepartamento = function(id) {
+    if (confirm('Tem certeza que deseja remover este departamento?')) {
+        fetch(`/departamento/${id}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert(data.message, 'success');
+                loadDepartamentos();
+            }
+        });
+    }
+};
+</script>

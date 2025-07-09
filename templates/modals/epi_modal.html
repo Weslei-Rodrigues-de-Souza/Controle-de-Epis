@@ -1,0 +1,136 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title">
+            <i class="fas fa-hard-hat"></i> Gerenciar EPIs
+        </h5>
+        <button type="button" class="close" onclick="closeModal('epiModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+        <!-- Formulário de Cadastro -->
+        <form id="epiForm" method="POST" action="/epi">
+            {{ form.hidden_tag() }}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.nome.label(class="form-label") }}
+                        {{ form.nome(class="form-control", placeholder="Nome do EPI") }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.marca.label(class="form-label") }}
+                        {{ form.marca(class="form-control", placeholder="Marca do EPI") }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.periodicidade_dias.label(class="form-label") }}
+                        {{ form.periodicidade_dias(class="form-control", placeholder="Dias") }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.ca.label(class="form-label") }}
+                        {{ form.ca(class="form-control", placeholder="Certificado de Aprovação") }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Meses de Troca</label>
+                <div class="checkbox-group">
+                    {% for subfield in form.meses %}
+                        <div class="checkbox-item">
+                            {{ subfield() }}
+                            {{ subfield.label }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('epiModal')">Cancelar</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Salvar EPI
+                </button>
+            </div>
+        </form>
+
+        <hr class="my-4">
+
+        <!-- Lista de EPIs -->
+        <div class="table-responsive">
+            <h6><i class="fas fa-list"></i> EPIs Cadastrados</h6>
+            <table class="table table-striped" id="episTable">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Marca</th>
+                        <th>CA</th>
+                        <th>Periodicidade</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="episTableBody">
+                    <!-- Dados carregados via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    loadEPIs();
+});
+
+function loadEPIs() {
+    fetch('/epis')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById('episTableBody');
+            tbody.innerHTML = '';
+            data.forEach(epi => {
+                const row = `
+                    <tr>
+                        <td>${epi.nome}</td>
+                        <td>${epi.marca}</td>
+                        <td>${epi.ca}</td>
+                        <td>${epi.periodicidade_dias} dias</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" onclick="editEPI(${epi.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteEPI(${epi.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        });
+}
+
+function editEPI(id) {
+    alert('Funcionalidade de edição em desenvolvimento');
+}
+
+function deleteEPI(id) {
+    if (confirm('Tem certeza que deseja remover este EPI?')) {
+        fetch(`/epi/${id}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert(data.message, 'success');
+                loadEPIs();
+            }
+        });
+    }
+}
+</script>

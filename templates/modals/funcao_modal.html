@@ -1,0 +1,129 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title">
+            <i class="fas fa-briefcase"></i> Gerenciar Funções
+        </h5>
+        <button type="button" class="close" onclick="closeModal('funcaoModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+        <!-- Formulário de Cadastro -->
+        <form id="funcaoForm" method="POST" action="/funcao">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.nome.label(class="form-label") }}
+                {{ form.nome(class="form-control", placeholder="Digite o nome da função") }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('funcaoModal')">Cancelar</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Salvar Função
+                </button>
+            </div>
+        </form>
+
+        <hr class="my-4">
+
+        <!-- Lista de Funções -->
+        <div class="table-responsive">
+            <h6><i class="fas fa-list"></i> Funções Cadastradas</h6>
+            <table class="table table-striped" id="funcoesTable">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Data Cadastro</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="funcoesTableBody">
+                    <tr>
+                        <td colspan="3" class="text-center">
+                            <i class="fas fa-spinner fa-spin"></i> Carregando...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+window.loadFuncoes = function() {
+    fetch('/funcoes')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById('funcoesTableBody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">Nenhuma função cadastrada</td></tr>';
+                return;
+            }
+            
+            data.forEach(func => {
+                const dataFormatada = func.created_at ? 
+                    new Date(func.created_at).toLocaleDateString('pt-BR') : 
+                    'N/A';
+                const row = `
+                    <tr>
+                        <td>${func.nome}</td>
+                        <td>${dataFormatada}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" onclick="editFuncao(${func.id}, '${func.nome.replace(/'/g, "\\'")}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteFuncao(${func.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        })
+        .catch(error => {
+            console.error('Erro ao carregar funções:', error);
+            const tbody = document.getElementById('funcoesTableBody');
+            if (tbody) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center text-danger">Erro ao carregar dados</td></tr>';
+            }
+            showAlert('Erro ao carregar lista de funções', 'danger');
+        });
+};
+
+window.editFuncao = function(id, nome) {
+    const novoNome = prompt('Editar nome da função:', nome);
+    if (novoNome && novoNome !== nome) {
+        fetch(`/funcao/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({nome: novoNome})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert(data.message, 'success');
+                loadFuncoes();
+            }
+        });
+    }
+};
+
+window.deleteFuncao = function(id) {
+    if (confirm('Tem certeza que deseja remover esta função?')) {
+        fetch(`/funcao/${id}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert(data.message, 'success');
+                loadFuncoes();
+            }
+        });
+    }
+};
+</script>

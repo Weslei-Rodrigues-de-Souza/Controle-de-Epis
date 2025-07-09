@@ -1,0 +1,36 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title">
+            <i class="fas fa-edit"></i> Editar Fornecedor
+        </h5>
+        <button type="button" class="close" onclick="closeModal('editFornecedorModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+        <form id="editFornecedorForm" method="POST" action="/fornecedor/{{ fornecedor.id }}">
+            {{ form.hidden_tag() }}
+            <input type="hidden" name="_method" value="PUT">
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.cnpj.label(class="form-label") }}
+                        {{ form.cnpj(class="form-control", value=fornecedor.cnpj) }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.nome.label(class="form-label") }}
+                        {{ form.nome(class="form-control", value=fornecedor.nome) }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('editFornecedorModal')">Cancelar</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Atualizar Fornecedor
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

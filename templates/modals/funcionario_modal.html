@@ -1,0 +1,167 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title">
+            <i class="fas fa-users"></i> Gerenciar Funcionários
+        </h5>
+        <button type="button" class="close" onclick="closeModal('funcionarioModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+        <!-- Formulário de Cadastro -->
+        <form id="funcionarioForm" method="POST" action="/funcionario">
+            {{ form.hidden_tag() }}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.nome.label(class="form-label") }}
+                        {{ form.nome(class="form-control", placeholder="Nome completo") }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.cpf.label(class="form-label") }}
+                        {{ form.cpf(class="form-control", placeholder="000.000.000-00") }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        {{ form.rg.label(class="form-label") }}
+                        {{ form.rg(class="form-control", placeholder="RG") }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        {{ form.ctps.label(class="form-label") }}
+                        {{ form.ctps(class="form-control", placeholder="CTPS") }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        {{ form.serie.label(class="form-label") }}
+                        {{ form.serie(class="form-control", placeholder="Série") }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.pis.label(class="form-label") }}
+                        {{ form.pis(class="form-control", placeholder="PIS") }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.secao_setor.label(class="form-label") }}
+                        {{ form.secao_setor(class="form-control", placeholder="Seção/Setor") }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        {{ form.data_admissao.label(class="form-label") }}
+                        {{ form.data_admissao(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        {{ form.departamento_id.label(class="form-label") }}
+                        {{ form.departamento_id(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        {{ form.funcao_id.label(class="form-label") }}
+                        {{ form.funcao_id(class="form-control") }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('funcionarioModal')">Cancelar</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Salvar Funcionário
+                </button>
+            </div>
+        </form>
+
+        <hr class="my-4">
+
+        <!-- Lista de Funcionários -->
+        <div class="table-responsive">
+            <h6><i class="fas fa-list"></i> Funcionários Cadastrados</h6>
+            <table class="table table-striped" id="funcionariosTable">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>CPF</th>
+                        <th>Departamento</th>
+                        <th>Função</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="funcionariosTableBody">
+                    <!-- Dados carregados via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    loadFuncionarios();
+});
+
+function loadFuncionarios() {
+    fetch('/funcionarios')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById('funcionariosTableBody');
+            tbody.innerHTML = '';
+            data.forEach(func => {
+                const row = `
+                    <tr>
+                        <td>${func.nome}</td>
+                        <td>${func.cpf}</td>
+                        <td>${func.departamento}</td>
+                        <td>${func.funcao}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" onclick="editFuncionario(${func.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteFuncionario(${func.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        });
+}
+
+function editFuncionario(id) {
+    // Implementar modal de edição mais complexo
+    alert('Funcionalidade de edição em desenvolvimento');
+}
+
+function deleteFuncionario(id) {
+    if (confirm('Tem certeza que deseja remover este funcionário?')) {
+        fetch(`/funcionario/${id}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert(data.message, 'success');
+                loadFuncionarios();
+            }
+        });
+    }
+}
+</script>

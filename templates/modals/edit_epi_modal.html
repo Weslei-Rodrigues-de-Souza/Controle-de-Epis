@@ -1,0 +1,67 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title">
+            <i class="fas fa-edit"></i> Editar EPI
+        </h5>
+        <button type="button" class="close" onclick="closeModal('editEpiModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+        <form id="editEpiForm" method="POST" action="/epi/{{ epi.id }}">
+            {{ form.hidden_tag() }}
+            <input type="hidden" name="_method" value="PUT">
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.nome.label(class="form-label") }}
+                        {{ form.nome(class="form-control", value=epi.nome, placeholder="Nome do EPI") }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.marca.label(class="form-label") }}
+                        {{ form.marca(class="form-control", value=epi.marca, placeholder="Marca do EPI") }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.periodicidade_dias.label(class="form-label") }}
+                        {{ form.periodicidade_dias(class="form-control", value=epi.periodicidade_dias, placeholder="Dias") }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.ca.label(class="form-label") }}
+                        {{ form.ca(class="form-control", value=epi.ca, placeholder="Certificado de Aprovação") }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Meses de Troca</label>
+                <div class="checkbox-group">
+                    {% for choice_value, choice_label in form.meses.choices %}
+                        <div class="checkbox-item">
+                            <input type="checkbox" 
+                                   name="meses" 
+                                   value="{{ choice_value }}" 
+                                   id="mes_{{ choice_value }}"
+                                   {% if choice_value in meses_selecionados %}checked{% endif %}>
+                            <label for="mes_{{ choice_value }}">{{ choice_label }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('editEpiModal')">Cancelar</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Atualizar EPI
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
