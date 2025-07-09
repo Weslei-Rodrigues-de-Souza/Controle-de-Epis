@@ -8,6 +8,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///epi_control.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
+    
     # Inicializar extensões
     db.init_app(app)
     
